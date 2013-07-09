@@ -15,7 +15,8 @@ use warnings;
 use 5.010;
 
 my $caseNumberFrom = 0; # test case start
-my $caseNumberTo = 3;   # test case end
+my $caseNumberTo = 20;   # test case end
+
 my $idx; #indicate current project index
 my $now; #indicate current directory
 chomp ( $now = `pwd`);
@@ -24,13 +25,19 @@ my $projectPrefix = 'project_';
 my $packagePath = 'net/synergyinfosys/xmppclient';
 my $package = 'net.synergyinfosys.xmppclient';
 
-#0, clean workspace
+my $cmd = shift;
+my $isClean = $cmd eq 'clean' ? 1 : 0;
+
+#clean workspace
 say 'Clean proto project first!';
 chdir $projectPath;
-say `ant clean`;
+`ant clean`;
 chdir $now;
 
-
+if( $isClean == 1){
+	say "finished cleaning, exit now.";
+	exit;
+}
 
 #clean old copied project
 say 'Deleting old projects';
@@ -61,7 +68,7 @@ for( $caseNumberFrom .. $caseNumberTo ){
 
  	#change android manifest app name
     #@string/app_name
-    &replaceAFile( 'AndroidManifest.xml', "@string/app_name", "Test_$idx"  );
+    &replaceAFile( 'AndroidManifest.xml', "\@string\/app_name", "test_$idx");
 
 	#modify all java file which referenced R.java
 	opendir DIR, 'src/'.$packagePath or die "Can not open 'src/$packagePath" . $!;
@@ -72,7 +79,7 @@ for( $caseNumberFrom .. $caseNumberTo ){
     }
 
     opendir DIR, 'src/'.$packagePath.'/test' or die "Can not open 'src/$packagePath/test" . $!;
-    my @filelist = grep { $_ ne '.' and $_ ne '..' } readdir DIR;
+    @filelist = grep { $_ ne '.' and $_ ne '..' } readdir DIR;
     for my $f ( @filelist ){
     	say 'parsing '. $f;
     	&replaceAFile( 'src/'.$packagePath.'/test/'.$f, "$package.R", "$package" . '_' . "$newPackage.R"  );

@@ -16,7 +16,7 @@ use warnings;
 use 5.010;
 
 my $caseNumberFrom = 0; # test case start
-my $caseNumberTo = 3;   # test case end
+my $caseNumberTo = 20;   # test case end
 my $idx; #indicate current project index
 my $now; #indicate current directory
 chomp ( $now = `pwd`);
@@ -33,6 +33,6 @@ for( $caseNumberFrom .. $caseNumberTo ){
 	say "uninstall old and install new for $idx:";
 	say `adb uninstall net.synergyinfosys.xmppclient_test_$idx`;
 	say `adb install project_$idx.apk `;
-
+	say `adb shell am start net.synergyinfosys.xmppclient_test_$idx/net.synergyinfosys.xmppclient.test.MainActivity`;
 	$idx ++;
 }
